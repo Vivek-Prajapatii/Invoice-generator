@@ -29,7 +29,7 @@ function Home() {
 
   return (
     <div className="home">
-      {generateInvoice ? (
+      {!generateInvoice ? (
         <InvoiceForm
           setGenerateInvoice={setGenerateInvoice}
           setFormData={setFormData}
