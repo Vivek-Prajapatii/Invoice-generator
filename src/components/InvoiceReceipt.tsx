@@ -15,28 +15,11 @@ import * as constants from "../constants/constants";
 import { getNext7Days } from "../utils/date.util";
 import { FormData } from "../models/models";
 import { generateInvoiceId } from "../utils/Invoice.util";
+import { calculateTotalAmount } from "../utils/Invoice.util";
 
 function InvoiceReceipt(props: { formData: FormData }) {
   const { formData } = props;
-
-  const calculateTotal = (formData: FormData) => {
-    let totalAmt = 0;
-    let totalHrs = 0;
-    for (let item of formData.items) {
-      totalAmt =
-        (totalAmt +
-          parseInt(item.otherExpenses) +
-          parseInt(item.labourCharges)) *
-        parseInt(item.totalHoursOfWork);
-
-      totalHrs = totalHrs + parseInt(item.totalHoursOfWork);
-    }
-    if (!isNaN(totalAmt) && !isNaN(totalHrs)) {
-      return { totalAmt, totalHrs };
-    } else return { totalAmt: "", totalHrs: "" };
-  };
-
-  const { totalAmt, totalHrs } = calculateTotal(formData);
+  const { totalAmt, totalHrs } = calculateTotalAmount(formData);
 
   const fields = {
     "Invoice ID": generateInvoiceId(),
@@ -51,6 +34,7 @@ function InvoiceReceipt(props: { formData: FormData }) {
         : "N/A",
   };
 
+  // prints the invoice page
   const handlePrintClick = () => {
     window.print();
   };
@@ -114,8 +98,9 @@ function InvoiceReceipt(props: { formData: FormData }) {
         <Grid container className="invoice-details">
           {formData.paymentStatus === "paid" ? (
             <Grid className="status"></Grid>
-          ) : <Grid></Grid>
-        }
+          ) : (
+            <Grid></Grid>
+          )}
 
           <TableContainer className="lower-table">
             <Table sx={{ width: 300 }}>
