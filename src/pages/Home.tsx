@@ -6,13 +6,15 @@ import { FormData } from "../models/models";
 
 function Home() {
   const [generateInvoice, setGenerateInvoice] = useState<boolean>(false);
+  // const date = new Date().toLocaleDateString();
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
     items: [createNewItem()], // Start with one item by default
     date: null,
-    paymentMethod: "",
-    paymentStatus: "",
+    paymentMethod: "cash",
+    paymentStatus: "paid",
     remarks: "",
   });
 
@@ -20,7 +22,7 @@ function Home() {
     return {
       description: "",
       totalHoursOfWork: "",
-      totalRate: "",
+      totalExpenses: "",
       otherExpenses: "",
       materials: "",
       labourCharges: "",

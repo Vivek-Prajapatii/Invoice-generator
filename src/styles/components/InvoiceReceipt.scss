@@ -1,6 +1,7 @@
 .container {
   margin-top: 2rem;
-  margin-bottom: 5rem;
+  margin-bottom: 3rem;
+  font-family: calibri;
 
   .address {
     margin-left: 1rem;
@@ -28,12 +29,14 @@
 
     h3 {
       color: rgb(0, 0, 0, 0.8);
-
       margin: 0.5rem 0;
     }
   }
 
   .table-container {
+    .table-header {
+      background-color: rgb(233, 248, 243);
+    }
     h3 {
       margin: 3rem 1rem 1rem 1rem;
     }
@@ -43,7 +46,22 @@
   }
 
   .invoice-details {
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .status {
+      margin-top: 2rem;
+      width: 40%;
+      height: 85%;
+      border-radius: 50%;
+      background-image: url("../../images/paid.png");
+      background-size: cover;
+    }
+
     .lower-table {
+      width: fit-content;
       margin-top: 2rem;
       margin-right: 2rem;
       display: flex;
@@ -73,5 +91,10 @@
     p {
       margin-left: 1rem;
     }
+  }
+
+  .share {
+    justify-content: center;
+    margin-top: 2rem;
   }
 }

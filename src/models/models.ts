@@ -1,7 +1,7 @@
 export interface Item {
   description: string;
   totalHoursOfWork: string;
-  totalRate: string;
+  totalExpenses: string;
   otherExpenses: string;
   materials: string;
   labourCharges: string;

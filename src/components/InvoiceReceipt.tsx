@@ -7,35 +7,52 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Button,
 } from "@mui/material";
 import "../styles/components/InvoiceReceipt.scss";
 import { TableContainer } from "@mui/material";
 import * as constants from "../constants/constants";
+import { getNext7Days } from "../utils/date.util";
+import { FormData } from "../models/models";
+import { generateInvoiceId } from "../utils/Invoice.util";
 
-function InvoiceReceipt(props: { formData: any }) {
+function InvoiceReceipt(props: { formData: FormData }) {
   const { formData } = props;
 
-  const fields = {
-    "Invoice ID": "invoiceNo",
-    "Invoice Date": formData.date,
-    "Total Hours": "Total hours",
-    "Total Amount": "amount",
-    "Payment Status": formData.paymentStatus,
-    "Payment Mode": formData.paymentMethod,
-    "Due Date": formData.date,
-  };
-  // Helper function to calculate the subtotal
-  const calculateSubtotal = (items: any) => {
-    return items.reduce(
-      (total: number, item: any) =>
-        total + item.totalHoursOfWork * item.totalRate,
-      0
-    );
+  const calculateTotal = (formData: FormData) => {
+    let totalAmt = 0;
+    let totalHrs = 0;
+    for (let item of formData.items) {
+      totalAmt =
+        (totalAmt +
+          parseInt(item.otherExpenses) +
+          parseInt(item.labourCharges)) *
+        parseInt(item.totalHoursOfWork);
+
+      totalHrs = totalHrs + parseInt(item.totalHoursOfWork);
+    }
+    if (!isNaN(totalAmt) && !isNaN(totalHrs)) {
+      return { totalAmt, totalHrs };
+    } else return { totalAmt: "", totalHrs: "" };
   };
 
-  // Helper function to calculate the total including other expenses
-  const calculateTotal = (items: any, otherExpenses: string) => {
-    return calculateSubtotal(items) + parseFloat(otherExpenses);
+  const { totalAmt, totalHrs } = calculateTotal(formData);
+
+  const fields = {
+    "Invoice ID": generateInvoiceId(),
+    "Invoice Date": formData.date,
+    "Total Hours": totalHrs,
+    "Total Amount": totalAmt,
+    "Payment Status": formData.paymentStatus,
+    "Payment Mode": formData.paymentMethod,
+    "Due Date":
+      formData.date && formData.paymentStatus !== "paid"
+        ? getNext7Days(formData.date?.toString())
+        : "N/A",
+  };
+
+  const handlePrintClick = () => {
+    window.print();
   };
 
   return (
@@ -55,9 +72,9 @@ function InvoiceReceipt(props: { formData: any }) {
         <Grid container className="table-container">
           <h3>Line Item Details</h3>
           <TableContainer>
-            <Table sx={{ width: 650 }} aria-label="simple table">
+            <Table sx={{ width: 650 }}>
               <TableHead>
-                <TableRow>
+                <TableRow className={"table-header"}>
                   <TableCell>
                     <h4>Description</h4>
                   </TableCell>
@@ -68,7 +85,7 @@ function InvoiceReceipt(props: { formData: any }) {
                     <h4>Hours</h4>
                   </TableCell>
                   <TableCell align="right">
-                    <h4>Charges</h4>
+                    <h4>Charges/hr</h4>
                   </TableCell>
                   <TableCell align="right">
                     <h4>Other</h4>
@@ -95,6 +112,11 @@ function InvoiceReceipt(props: { formData: any }) {
           </TableContainer>
         </Grid>
         <Grid container className="invoice-details">
+          {formData.paymentStatus === "paid" ? (
+            <Grid className="status"></Grid>
+          ) : <Grid></Grid>
+        }
+
           <TableContainer className="lower-table">
             <Table sx={{ width: 300 }}>
               <TableBody>
@@ -104,7 +126,9 @@ function InvoiceReceipt(props: { formData: any }) {
                       <TableCell className={"table-cell"}>
                         <h4>{label}</h4>
                       </TableCell>
-                      <TableCell className={"table-cell"}>{value}</TableCell>
+                      <TableCell className={"table-cell"}>
+                        {value !== "NaN" && value && value.toString()}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -116,6 +140,11 @@ function InvoiceReceipt(props: { formData: any }) {
         <Grid container className="remarks">
           <h4>Remarks : </h4>
           <p>{formData.remarks}</p>
+        </Grid>
+        <Grid container className="share">
+          <Button variant="contained" onClick={handlePrintClick}>
+            Print
+          </Button>
         </Grid>
       </Grid>
     </Container>

@@ -24,6 +24,7 @@ function InvoiceForm(props: {
   formData: FormData;
 }) {
   const { setGenerateInvoice, setFormData, formData } = props;
+  // const date = new Date().toLocaleDateString();
 
   const handleChange =
     (field: keyof Item | keyof FormData, index?: number) => (event: any) => {
@@ -52,32 +53,26 @@ function InvoiceForm(props: {
     setFormData({ ...formData, date: date });
   };
 
-  // const handleCalculateTotalHours = () => {
-  //   const start: any = new Date(`2000-01-01T${formData.startTime}`);
-  //   const end: any = new Date(`2000-01-01T${formData.endTime}`);
-
-  //   const timeDiff = end - start;
-  //   const totalHours = timeDiff / (1000 * 60 * 60); // Convert milliseconds to hours
-
-  //   setFormData({ ...formData, totalHoursOfWork: totalHours.toFixed(2) });
-  // };
-
   const handleSubmit = () => {
     // Handle form submission logic here
-    setGenerateInvoice(true);
-    console.log(formData);
+    if (formData.name !== "" || formData.phone !== "") {
+      setGenerateInvoice(true);
+    } else {
+      alert("Fill the mandatory fields");
+    }
   };
 
   function createNewItem() {
     return {
       description: "",
       totalHoursOfWork: "",
-      totalRate: "",
+      totalExpenses: "",
       otherExpenses: "",
       materials: "",
       labourCharges: "",
     };
   }
+
   const handleReset = () => {
     setFormData({
       name: "",
@@ -106,7 +101,7 @@ function InvoiceForm(props: {
 
   return (
     <Container className="container">
-      <form>
+      <form onSubmit={handleSubmit}>
         <Grid container spacing={2} sx={{ mt: 2 }}>
           {/* basic labour info */}
 
@@ -122,6 +117,7 @@ function InvoiceForm(props: {
                 variant="filled"
                 label="Name"
                 fullWidth
+                required
                 value={formData.name}
                 onChange={handleChange("name")}
               />
@@ -129,6 +125,8 @@ function InvoiceForm(props: {
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="filled"
+                required
+                type="number"
                 label="Phone"
                 fullWidth
                 value={formData.phone}
@@ -178,6 +176,7 @@ function InvoiceForm(props: {
                     label="Total Hours of Work"
                     variant="filled"
                     fullWidth
+                    type="number"
                     value={item.totalHoursOfWork}
                     onChange={handleChange("totalHoursOfWork", index)}
                   />
@@ -197,6 +196,7 @@ function InvoiceForm(props: {
                   <TextField
                     label="Labour Charges"
                     variant="filled"
+                    type="number"
                     fullWidth
                     value={item.labourCharges}
                     onChange={handleChange("labourCharges", index)}
@@ -205,21 +205,28 @@ function InvoiceForm(props: {
 
                 <Grid item xs={12} sm={4}>
                   <TextField
-                    label="Total Rate"
+                    label="Other Expenses"
                     variant="filled"
                     fullWidth
-                    value={item.totalRate}
-                    onChange={handleChange("totalRate", index)}
+                    type="number"
+                    value={item.otherExpenses}
+                    onChange={handleChange("otherExpenses", index)}
                   />
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
                   <TextField
-                    label="Other Expenses"
+                    label="Total Amount"
                     variant="filled"
+                    disabled
                     fullWidth
-                    value={item.otherExpenses}
-                    onChange={handleChange("otherExpenses", index)}
+                    type="number"
+                    value={
+                      parseInt(item.otherExpenses) +
+                        parseInt(item.totalHoursOfWork) *
+                          parseInt(item.labourCharges) || ""
+                    }
+                    onChange={handleChange("totalExpenses", index)}
                   />
                 </Grid>
               </Grid>
@@ -244,13 +251,14 @@ function InvoiceForm(props: {
             sx={{ width: "100%", ml: 2, mr: 2 }}
           >
             <Grid item xs={12} sm={4}>
-              <FormControl fullWidth variant={"filled"}>
+              <FormControl fullWidth variant={"filled"} required>
                 <InputLabel id="payment-status-label">
                   Payment Status
                 </InputLabel>
                 <Select
                   labelId="payment-status-label"
                   id="payment-status"
+                  required
                   value={formData.paymentStatus}
                   label="Payment Status"
                   onChange={handleChange("paymentStatus")}
@@ -263,7 +271,7 @@ function InvoiceForm(props: {
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <FormControl fullWidth variant={"filled"}>
+              <FormControl fullWidth variant={"filled"} required>
                 <InputLabel id="payment-method-label">
                   Payment Method
                 </InputLabel>
@@ -291,7 +299,6 @@ function InvoiceForm(props: {
                 >
                   <DatePicker
                     label="Date"
-                    // defaultValue={dayjs("12-12-2000")}
                     onError={() => {}}
                     value={dayjs(formData?.date)}
                     onChange={(e) => handleDateChange(e)}
@@ -322,7 +329,12 @@ function InvoiceForm(props: {
             <Button variant="outlined" color="secondary" onClick={handleReset}>
               Reset
             </Button>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
+            <Button
+              variant="contained"
+              color="primary"
+              // onClick={handleSubmit}
+              type="submit"
+            >
               Create Invoice
             </Button>
           </Stack>

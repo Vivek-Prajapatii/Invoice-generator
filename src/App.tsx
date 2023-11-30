@@ -7,8 +7,7 @@ function App() {
   return (
     <div className="App">
       <div className="app-wrapper">
-        <h1>Invoice generator</h1>
-
+        <h1>Invoice</h1>
         <Home />
       </div>
     </div>
