@@ -1,0 +1,13 @@
+.container {
+    margin: 2rem;
+    .grid-container {
+        display: flex;
+        justify-content: space-between;
+        margin-right: 2rem;
+
+        .address {
+            text-align: left;
+            max-width: 15rem;
+        }
+    }
+}
