@@ -34,9 +34,21 @@ function InvoiceReceipt(props: { formData: FormData }) {
         : "N/A",
   };
 
-  // prints the invoice page
+  // opens up a window to print the invoice page
   const handlePrintClick = () => {
     window.print();
+  };
+
+  // Opens the email app to send the email
+  const sendEmail = () => {
+    const subject = encodeURIComponent("Invoice");
+    const body = encodeURIComponent("Email Body is not disclosed");
+
+    // Create a mailto link with subject and body parameters
+    const mailtoLink = `mailto:prajapativivek@gmail.com?subject=${subject}&body=${body}`;
+
+    // Open the default email client
+    window.location.href = mailtoLink;
   };
 
   return (
@@ -127,6 +139,9 @@ function InvoiceReceipt(props: { formData: FormData }) {
           <p>{formData.remarks}</p>
         </Grid>
         <Grid container className="share">
+          <Button variant="contained" onClick={sendEmail}>
+            Share
+          </Button>
           <Button variant="contained" onClick={handlePrintClick}>
             Print
           </Button>

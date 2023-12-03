@@ -46,7 +46,6 @@
   }
 
   .invoice-details {
-
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -96,5 +95,9 @@
   .share {
     justify-content: center;
     margin-top: 2rem;
+    
+    button {
+      margin: 1rem;
+    }
   }
 }
