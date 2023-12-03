@@ -48,13 +48,14 @@ function InvoiceForm(props: {
       }
     };
 
+  
   const handleDateChange = (e: any) => {
     const date = convertDate(e.$d.toISOString());
     setFormData({ ...formData, date: date });
   };
 
   const handleSubmit = () => {
-    // Handle form submission logic here
+    // validates if form is empty or not
     if (formData.name !== "" || formData.phone !== "") {
       setGenerateInvoice(true);
     } else {
